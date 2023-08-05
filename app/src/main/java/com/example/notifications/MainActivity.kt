@@ -17,8 +17,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var notification: Notification
 
     companion object {
-        val CHANNEL_ID = "Test"
-        val CHANNEL_NAME = "TestChannel"
+        const val CHANNEL_ID = "Test"
+        const val CHANNEL_NAME = "TestChannel"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,16 +36,16 @@ class MainActivity : AppCompatActivity() {
 
     private fun createMyNotification() {
 
-        //the below three line code can be written in a single line as shown in the bigPicture variable
-        val drawable = ResourcesCompat.getDrawable(resources, R.drawable.img, null)
-        val bitmapDrawable = drawable as BitmapDrawable
-        val bitmap = bitmapDrawable.bitmap
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             notificationManager.createNotificationChannel(NotificationChannel(CHANNEL_ID,
                 CHANNEL_NAME,
                 NotificationManager.IMPORTANCE_HIGH))
         }
+
+        //the below three line code can be written in a single line as shown in the bigPicture variable
+        val drawable = ResourcesCompat.getDrawable(resources, R.drawable.img, null)
+        val bitmapDrawable = drawable as BitmapDrawable
+        val bitmap = bitmapDrawable.bitmap
 
         val bigPicture = (ResourcesCompat.getDrawable(resources, R.drawable.big_picture, null) as BitmapDrawable).bitmap
 
@@ -66,9 +66,6 @@ class MainActivity : AppCompatActivity() {
                 .setSummaryText("Image from Raman")
         }
 
-//        val inboxStyle = NotificationCompat
-//            .InboxStyle
-
         notification = NotificationCompat.Builder(this@MainActivity, CHANNEL_ID)
             .setContentTitle("Raman")
             .setContentText("Hello")
@@ -76,7 +73,6 @@ class MainActivity : AppCompatActivity() {
             .setSmallIcon(R.drawable.img)
             .setLargeIcon(bitmap)
             .setStyle(bigPictureStyle)
-            .setChannelId(CHANNEL_ID)
             .build()
     }
 }
