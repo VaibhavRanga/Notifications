@@ -3,10 +3,13 @@ package com.example.notifications
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Intent
 import android.graphics.drawable.BitmapDrawable
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.core.content.res.ResourcesCompat
 import com.example.notifications.databinding.ActivityMainBinding
@@ -17,8 +20,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var notification: Notification
 
     companion object {
-        const val CHANNEL_ID = "Test"
-        const val CHANNEL_NAME = "TestChannel"
+        const val CHANNEL_ID = "Promotion1"
+        const val CHANNEL_NAME_1 = "Promotions"
+        const val CHANNEL_NAME_2 = "Messages"
+        const val CHANNEL_NAME_3 = "Backup"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,41 +43,57 @@ class MainActivity : AppCompatActivity() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             notificationManager.createNotificationChannel(NotificationChannel(CHANNEL_ID,
-                CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_HIGH))
+                CHANNEL_NAME_1, NotificationManager.IMPORTANCE_HIGH))
         }
 
-        //the below three line code can be written in a single line as shown in the bigPicture variable
-        val drawable = ResourcesCompat.getDrawable(resources, R.drawable.img, null)
-        val bitmapDrawable = drawable as BitmapDrawable
-        val bitmap = bitmapDrawable.bitmap
+        val bigImageBitmap = (ResourcesCompat.getDrawable(resources, R.drawable.blue_flowers, null) as BitmapDrawable).bitmap
+        val hackerBitmap = (ResourcesCompat.getDrawable(resources, R.drawable.hacker_icon, null) as BitmapDrawable).bitmap
 
-        val bigPicture = (ResourcesCompat.getDrawable(resources, R.drawable.big_picture, null) as BitmapDrawable).bitmap
+        val bigPicture = NotificationCompat
+            .BigPictureStyle()
+            .bigPicture(bigImageBitmap)
+            .setBigContentTitle("Content title")
+            .setSummaryText("Summary text")
 
-        val bigPictureStyle = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            NotificationCompat
-                .BigPictureStyle()
-                .bigPicture(bigPicture)
-                .bigLargeIcon(bitmap)
-                .setBigContentTitle("Full image")
-                .setContentDescription("Image from Raman")
-                .setSummaryText("Image summary")
-        } else {
-            NotificationCompat
-                .BigPictureStyle()
-                .bigPicture(bigPicture)
-                .bigLargeIcon(bitmap)
-                .setBigContentTitle("Full image")
-                .setSummaryText("Image from Raman")
-        }
+        val inboxStyle = NotificationCompat
+            .InboxStyle()
+            .addLine("Line1")
+            .addLine("Line2")
+            .addLine("Line3")
+            .addLine("Line4")
+            .addLine("Line5")
+            .addLine("Line6")
+            .addLine("Line7")
+            .addLine("Line8")
+            .setBigContentTitle("Bog content title")
+            .setSummaryText("Summary text")
 
-        notification = NotificationCompat.Builder(this@MainActivity, CHANNEL_ID)
-            .setContentTitle("Raman")
-            .setContentText("Hello")
-            .setSubText("New message")
-            .setSmallIcon(R.drawable.img)
-            .setLargeIcon(bitmap)
-            .setStyle(bigPictureStyle)
+        val iNext = Intent(this@MainActivity, MainActivity::class.java)
+        val pi = PendingIntent.getActivity(this@MainActivity, 100, iNext, PendingIntent.FLAG_IMMUTABLE)
+
+        val smallNotification = RemoteViews(packageName, R.layout.custom_notification_small)
+        val largeNotification = RemoteViews(packageName, R.layout.custom_notification_large)
+
+        smallNotification.setTextViewText(R.id.textViewHeading, "Notification heading")
+        smallNotification.setTextViewText(R.id.textViewContent, "Notification content")
+
+        largeNotification.setTextViewText(R.id.textViewHeading, "Notification heading")
+        largeNotification.setTextViewText(R.id.textViewContent, "Notification content")
+
+        notification = NotificationCompat
+            .Builder(this@MainActivity, CHANNEL_ID)
+            .setSmallIcon(R.drawable.hacker_icon)
+            .setContentTitle("Content title")
+            .setContentText("Content text")
+            .setAutoCancel(true)
+//            .setOngoing(true)
+//            .setStyle(bigPicture)
+//            .setStyle(inboxStyle)
+            .setStyle(NotificationCompat.DecoratedCustomViewStyle())
+            .setCustomContentView(smallNotification)
+            .setCustomBigContentView(largeNotification)
+            .setContentIntent(pi)
+            .setLargeIcon(hackerBitmap)
             .build()
     }
 }
